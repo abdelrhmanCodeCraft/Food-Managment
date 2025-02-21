@@ -1,0 +1,30 @@
+:root {
+  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+
+  color-scheme: light dark;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+
+
+body {
+  margin: 0;
+  background-color: white;
+  color: black;
+  text-transform: capitalize;
+}
+
+.auth-container{
+    background-image: url(./assets/images/ella.png);
+    background-position: center center;
+    background-size: cover;
+}
+
+.bg-overlay {
+    background: linear-gradient(25deg, #378c2f52, #000000af);
+}
