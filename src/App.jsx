@@ -13,27 +13,66 @@ import RecipeData from "./modules/Recipes/RecipesData/RecipeData"
 import CategoriesList from "./modules/Categories/CategoriesList/CategoriesList"
 import CategoryData from "./modules/Categories/CategoryData/CategoryData"
 import UserList from "./modules/Users/UserList/UserList"
+import { useEffect, useState } from "react";
+import { jwtDecode } from "jwt-decode";
+import ProtectedRoute from "./modules/shared/ProtectedRoute/ProtectedRoute";
+import ChangePass from "./modules/Auth/ChangePassword/ChangePass";
+
 
 function App() {
+
+  const [loginData, setLoginData] = useState(()=>{
+    let token =localStorage.getItem('token');
+    return token ? jwtDecode(token) : null
+  });
+
+    const saveLoginData = () => {
+    const encodedToken = localStorage.getItem("token");
+
+    if (!encodedToken) {
+      console.error("Token not found in localStorage");
+      return;
+    }
+
+    try {
+      const decodedToken = jwtDecode(encodedToken);
+      setLoginData(decodedToken);
+      console.log('Decoded Token:', decodedToken);
+    } catch (error) {
+      console.error('Invalid token format:', error);
+    }
+  };
+
+  useEffect(() => {
+    if (localStorage.getItem('token'))
+      saveLoginData() 
+  }, []);
+
+      
   const routes = createBrowserRouter([
     {
       path: "/",
-      element: <AuthLayout />,
+      element: <AuthLayout loginData={loginData} />,
       errorElement: <NotFound />,
       children: [
-        { index: true, element: <Login /> },
+        { index: true, element: <Login saveLoginData={saveLoginData} /> },
         { path: "register", element: <Register /> },
         { path: "forgot", element: <Forgot /> },
         { path: "reset", element: <Reset /> },
         { path: "verify", element: <Verify /> },
+        { path: "change-pass", element: <ChangePass /> },
       ],
     },
     {
       path: "/dashboard",
-      element: <MasterLayout />,
+      element: (
+        <ProtectedRoute>
+          <MasterLayout loginData={loginData} />
+        </ProtectedRoute>
+      ),
       errorElement: <NotFound />,
       children: [
-        { index: true, element: <Dashboard /> },
+        { index: true, element: <Dashboard loginData={loginData} /> },
         { path: "recipe-list", element: <RecipeList /> },
         { path: "recipe-data", element: <RecipeData /> },
         { path: "categories-list", element: <CategoriesList /> },
